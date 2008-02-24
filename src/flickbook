@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-#  Copyright Luis de Bethencourt Guimera 2008
+#  Copyright Luis de Bethencourt Guimera, Andrew Hunter 2008
 #
 #    This program is free software; you may redistribute it and/or modify it
 #    under the terms of the GNU General Public License as published by the Free 
@@ -64,8 +64,11 @@ class FlickBook:
         self.flickroll.get_first_photo()
 
     def time_out_cb(self):
-        self.next(self.image)
-        return True
+        try:
+            self.next(self.image)
+            return True
+        except AttributeError:
+            self.flickroll.get_first_photo()
 
 if __name__ == "__main__":
     flickbook = FlickBook()
