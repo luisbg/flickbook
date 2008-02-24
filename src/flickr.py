@@ -2,38 +2,45 @@ import flickrapi
 import urllib
 import random
 
-api_key = '045379bc5368502f749af23d95a17c83'
-flickr = flickrapi.FlickrAPI(api_key)
+class Flickr:
+    def __init__(self):
+        self.api_key = '045379bc5368502f749af23d95a17c83'
+        self.flickr_api = flickrapi.FlickrAPI(self.api_key)
+        self.id = ''
 
-def search_photo(tag_list):
-    tag_number = random.randint(0, len(tag_list.photo[0].tags[0].tag) - 1)
-    tag = tag_list.photo[0].tags[0].tag[tag_number]['raw']
-    print tag
-    explore = flickr.photos_search(tags=tag, sort='interestingness-desc')
-    return explore
-   
-explore = flickr.interestingness_getList(api_key = api_key)
-id = ''
+    def search_photo(self):
+        tag_number = random.randint(0, len(self.tag_list.photo[0].tags[0].tag) - 1)
+        tag = self.tag_list.photo[0].tags[0].tag[tag_number]['raw']
+        print tag
+        self.explore = self.flickr_api.photos_search(tags = tag, \
+            sort = 'interestingness-desc', \
+            content_type = 'photos')
 
-c = 0
-while c < 10:
-    photo_number = random.randint(0, len(explore.photos[0].photo) - 1)
-    while id == explore.photos[0].photo[photo_number]['id']:
-        explore = search_photo(tag_list)
-        photo_number = random.randint(0, len(explore.photos[0].photo) - 1)
+    def get_first_photo(self):
+        self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
 
-    id = explore.photos[0].photo[photo_number]['id']
-    print id
-    photos = flickr.photos_getSizes(photo_id=id)
+    def get_next_photo(self, filename):
+        photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
+        while self.id == self.explore.photos[0].photo[photo_number]['id']:
+            self.explore = self.search_photo()
+            photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
 
-    bigger = len(photos.sizes[0].size) - 1
-    source = photos.sizes[0].size[bigger]['source']
-    print source
+        self.id = self.explore.photos[0].photo[photo_number]['id']
+        photos = self.flickr_api.photos_getSizes(photo_id=self.id)
 
-    file = '%d.jpg' % c
-    urllib.urlretrieve(source, file)
+        medium = len(photos.sizes[0].size) - 2
+        source = photos.sizes[0].size[medium]['source']
+        urllib.urlretrieve(source, filename)
 
-    tag_list = flickr.tags_getListPhoto(photo_id=id)
-    explore = search_photo(tag_list)
+        self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
+        self.search_photo()
 
-    c = c + 1
+if __name__ == "__main__":
+    flickr = Flickr() 
+    explore = flickr.get_first_photo()
+    c = 0
+    while c < 20:
+        filename = '%d.jpg' % c
+        flickr.get_next_photo(filename)
+        print c
+        c = c + 1

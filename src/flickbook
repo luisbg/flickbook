@@ -1,0 +1,54 @@
+#!/usr/bin/python
+#
+#  Copyright Andrew Hunter, Luis de Bethencourt Guimera 2008
+#
+#    This program is free software; you may redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by the Free 
+#    Software Foundation; either version 2 of the License, or (at your option) 
+#    any later version.
+#
+#    This program is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+#    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+#    more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+try:
+    import gtk
+    import os
+    from gtk import glade
+    import flickr
+except:
+    import_error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, \
+        gtk.BUTTONS_OK, ('You need to install python bindings for gtk and/or glade \
+        ("python-gtk2 & python-glade2" in debian/ubuntu)'))
+    import_error.run()
+    sys.exit(1)
+
+class Flickbook:
+    def __init__(self):
+        self.gladefile = "gui.glade"
+        self.wTree = gtk.glade.XML(self.gladefile)
+        self.window = self.wTree.get_widget("mainWindow")
+        self.image = self.wTree.get_widget("image")
+
+        dic = { "on_nextButton_clicked" : self.next,
+            "on_mainWindow_destroy" : gtk.main_quit}
+        self.wTree.signal_autoconnect(dic)
+
+        self.counter = 0
+        self.flickr = flickr.Flickr()
+        self.explore = self.flickr.get_first_photo()
+        self.next(self.image)
+
+    def next(self, widget):
+        filename = '%d.jpg' % self.counter
+        self.flickr.get_next_photo(filename)
+        pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 600, 600)
+        self.image.set_from_pixbuf(pixbuf)
+
+if __name__ == "__main__":
+    flickbook = Flickbook()
+    gtk.main()       
