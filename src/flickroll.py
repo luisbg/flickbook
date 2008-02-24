@@ -1,8 +1,25 @@
+#!/usr/bin/python
+#
+#  Copyright Andrew Hunter, Luis de Bethencourt Guimera 2008
+#
+#    This program is free software; you may redistribute it and/or modify it
+#    under the terms of the GNU General Public License as published by the Free 
+#    Software Foundation; either version 2 of the License, or (at your option) 
+#    any later version.
+#
+#    This program is distributed in the hope that it will be useful, but WITHOUT
+#    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+#    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+#    more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import flickrapi
 import urllib
 import random
 
-class Flickr:
+class FlickRoll:
     def __init__(self):
         self.api_key = '045379bc5368502f749af23d95a17c83'
         self.flickr_api = flickrapi.FlickrAPI(self.api_key)
@@ -36,11 +53,11 @@ class Flickr:
         self.search_photo()
 
 if __name__ == "__main__":
-    flickr = Flickr() 
-    explore = flickr.get_first_photo()
+    flickroll = FlickRoll() 
+    explore = flickroll.get_first_photo()
     c = 0
     while c < 20:
         filename = '%d.jpg' % c
-        flickr.get_next_photo(filename)
+        flickroll.get_next_photo(filename)
         print c
         c = c + 1

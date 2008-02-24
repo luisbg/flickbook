@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-#  Copyright Andrew Hunter, Luis de Bethencourt Guimera 2008
+#  Copyright Luis de Bethencourt Guimera 2008
 #
 #    This program is free software; you may redistribute it and/or modify it
 #    under the terms of the GNU General Public License as published by the Free 
@@ -19,7 +19,7 @@ try:
     import gtk
     import os
     from gtk import glade
-    import flickr
+    import flickroll
 except:
     import_error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, \
         gtk.BUTTONS_OK, ('You need to install python bindings for gtk and/or glade \
@@ -27,7 +27,7 @@ except:
     import_error.run()
     sys.exit(1)
 
-class Flickbook:
+class FlickBook:
     def __init__(self):
         self.gladefile = "gui.glade"
         self.wTree = gtk.glade.XML(self.gladefile)
@@ -39,16 +39,16 @@ class Flickbook:
         self.wTree.signal_autoconnect(dic)
 
         self.counter = 0
-        self.flickr = flickr.Flickr()
-        self.explore = self.flickr.get_first_photo()
+        self.flickroll = flickroll.FlickRoll()
+        self.flickroll.get_first_photo()
         self.next(self.image)
 
     def next(self, widget):
         filename = '%d.jpg' % self.counter
-        self.flickr.get_next_photo(filename)
+        self.flickroll.get_next_photo(filename)
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 600, 600)
         self.image.set_from_pixbuf(pixbuf)
 
 if __name__ == "__main__":
-    flickbook = Flickbook()
+    flickbook = FlickBook()
     gtk.main()       
