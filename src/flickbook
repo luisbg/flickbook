@@ -17,6 +17,8 @@
 
 try:
     import gtk
+    import pygtk
+    import gobject
     import os
     from gtk import glade
     import flickroll
@@ -33,8 +35,9 @@ class FlickBook:
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.wTree.get_widget("mainWindow")
         self.image = self.wTree.get_widget("image")
+        self.tagEntry = self.wTree.get_widget("tagEntry")
 
-        dic = { "on_nextButton_clicked" : self.next,
+        dic = { "on_newThreadButton_clicked" : self.new_thread,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
 
@@ -42,12 +45,27 @@ class FlickBook:
         self.flickroll = flickroll.FlickRoll()
         self.flickroll.get_first_photo()
         self.next(self.image)
+        self.time_id = gobject.timeout_add(10000, self.time_out_cb)
 
     def next(self, widget):
         filename = '%d.jpg' % self.counter
-        self.flickroll.get_next_photo(filename)
+        tag = self.flickroll.get_next_photo(filename)
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 600, 600)
         self.image.set_from_pixbuf(pixbuf)
+        
+        self.tagEntry.set_text(tag)
+
+        if self.counter < 10:
+            self.counter += 1
+        else:
+            self.counter = 0
+
+    def new_thread(self, widget):
+        self.flickroll.get_first_photo()
+
+    def time_out_cb(self):
+        self.next(self.image)
+        return True
 
 if __name__ == "__main__":
     flickbook = FlickBook()

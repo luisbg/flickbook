@@ -24,12 +24,12 @@ class FlickRoll:
         self.api_key = '045379bc5368502f749af23d95a17c83'
         self.flickr_api = flickrapi.FlickrAPI(self.api_key)
         self.id = ''
+        self.tag = ''
 
     def search_photo(self):
         tag_number = random.randint(0, len(self.tag_list.photo[0].tags[0].tag) - 1)
-        tag = self.tag_list.photo[0].tags[0].tag[tag_number]['raw']
-        print tag
-        self.explore = self.flickr_api.photos_search(tags = tag, \
+        self.tag = self.tag_list.photo[0].tags[0].tag[tag_number]['raw']
+        self.explore = self.flickr_api.photos_search(tags = self.tag, \
             sort = 'interestingness-desc', \
             content_type = 'photos')
 
@@ -51,6 +51,7 @@ class FlickRoll:
 
         self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
         self.search_photo()
+        return self.tag
 
 if __name__ == "__main__":
     flickroll = FlickRoll() 
