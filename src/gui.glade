@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.0 on Sun Feb 24 21:58:29 2008 -->
+<!--Generated with glade3 3.4.0 on Sun Feb 24 22:05:35 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainWindow">
     <property name="visible">True</property>
@@ -24,7 +24,7 @@
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                 <property name="label" translatable="yes">New Thread</property>
                 <property name="response_id">0</property>
-                <signal name="clicked" handler="on_nextButton_clicked"/>
+                <signal name="clicked" handler="on_newThreadButton_clicked"/>
               </widget>
             </child>
             <child>
