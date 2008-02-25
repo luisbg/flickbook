@@ -18,13 +18,17 @@
 import flickrapi
 import urllib
 import random
+import threading
+import download
 
-class FlickRoll:
+class FlickRoll(threading.Thread):
     def __init__(self):
         self.api_key = '045379bc5368502f749af23d95a17c83'
         self.flickr_api = flickrapi.FlickrAPI(self.api_key)
         self.id = ''
         self.tag = ''
+        self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
+        threading.Thread.__init__(self)
 
     def search_photo(self):
         tag_number = random.randint(0, len(self.tag_list.photo[0].tags[0].tag) - 1)
@@ -34,31 +38,39 @@ class FlickRoll:
             content_type = 'photos')
 
     def get_first_photo(self):
-        self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
+        def get_first_photo_in_thread():
+            self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
+        threading.Thread(target=get_first_photo_in_thread).start()
 
     def get_next_photo(self, filename):
-        photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
-        while self.id == self.explore.photos[0].photo[photo_number]['id']:
-            self.explore = self.search_photo()
-            photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
+        def get_next_photo_in_thread():
+            try:
+                photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
+                while self.id == self.explore.photos[0].photo[photo_number]['id']:
+                    self.explore = self.search_photo()
+                    photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
 
-        self.id = self.explore.photos[0].photo[photo_number]['id']
-        photos = self.flickr_api.photos_getSizes(photo_id=self.id)
+                self.id = self.explore.photos[0].photo[photo_number]['id']
+                photos = self.flickr_api.photos_getSizes(photo_id=self.id)
 
-        medium = len(photos.sizes[0].size) - 2
-        source = photos.sizes[0].size[medium]['source']
-        urllib.urlretrieve(source, filename)
+                medium = len(photos.sizes[0].size) - 2
+                source = photos.sizes[0].size[medium]['source']
+                download.Download(source, filename).run()
 
-        self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
-        self.search_photo()
-        return self.tag
+                self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
+                self.search_photo()
+            except AttributeError:
+                self.get_first_photo()
+            except FlickrError:
+                self.get_first_photo()
+        threading.Thread(target=get_next_photo_in_thread).start()
 
 if __name__ == "__main__":
     flickroll = FlickRoll() 
     explore = flickroll.get_first_photo()
     c = 0
-    while c < 20:
+    while c < 50:
         filename = '%d.jpg' % c
         flickroll.get_next_photo(filename)
         print c
-        c = c + 1
+        c += 1
