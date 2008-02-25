@@ -39,7 +39,7 @@ class FlickBook:
         self.pitchScale = self.wTree.get_widget("pitchScale")
 
         dic = { "on_newThreadButton_clicked" : self.next,
-            "on_pitchScale_value_changed" : self.pitchChange,
+            "on_syncButton_clicked" : self.pitchChange,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
 
@@ -77,7 +77,9 @@ class FlickBook:
             self.i = 0
 
     def pitchChange(self, value):
-        pass
+        gobject.source_remove(self.time_id)
+        self.time_id = gobject.timeout_add(int(60000 / self.pitch), self.time_out_cb)
+        self.next(self.image)
 
     def time_out_cb(self):
         self.flickroll_loop()

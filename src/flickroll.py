@@ -23,7 +23,7 @@ import download
 
 class FlickRoll(threading.Thread):
     def __init__(self):
-        self.api_key = '045379bc5368502f749af23d95a17c83'
+        self.api_key = '2215f6cfeb48da6ef0e01f80c24ef039'
         self.flickr_api = flickrapi.FlickrAPI(self.api_key)
         self.id = ''
         self.tag = ''
