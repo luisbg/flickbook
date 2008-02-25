@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.0 on Mon Feb 25 21:22:48 2008 -->
+<!--Generated with glade3 3.4.0 on Tue Feb 26 00:13:34 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainWindow">
     <property name="visible">True</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-    <property name="resizable">False</property>
+    <property name="title" translatable="yes">flickbook</property>
+    <property name="icon">icon.jpg</property>
+    <property name="opacity">0.5</property>
+    <signal name="key_press_event" handler="on_key_press_event"/>
     <signal name="destroy" handler="on_mainWindow_destroy"/>
     <child>
       <widget class="GtkVBox" id="vbox1">
@@ -16,6 +19,20 @@
           <widget class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+            <child>
+              <widget class="GtkButton" id="fullscreenButton">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <property name="label" translatable="yes">Fullscreen</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_fullscreenButton_clicked"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="GtkButton" id="newThreadButton">
                 <property name="visible">True</property>
@@ -29,6 +46,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -39,7 +57,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="padding">5</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -54,7 +72,7 @@
               </widget>
               <packing>
                 <property name="expand">False</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -68,7 +86,7 @@
                 <signal name="value_changed" handler="on_pitchScale_value_changed"/>
               </widget>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>

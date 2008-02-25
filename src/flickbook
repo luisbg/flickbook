@@ -23,6 +23,8 @@ try:
     from gtk import glade
     import flickroll
     import threading
+    import time
+    from gtk.gdk import keyval_name
 except:
     import_error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, \
         gtk.BUTTONS_OK, ('You need to install python bindings for gtk and/or glade \
@@ -39,7 +41,9 @@ class FlickBook:
         self.pitchScale = self.wTree.get_widget("pitchScale")
 
         dic = { "on_newThreadButton_clicked" : self.next,
-            "on_syncButton_clicked" : self.pitchChange,
+            "on_syncButton_clicked" : self.sync,
+            "on_fullscreenButton_clicked" : self.fullscreen,
+            "on_key_press_event" : self.keyPress,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
 
@@ -76,10 +80,31 @@ class FlickBook:
         else:
             self.i = 0
 
-    def pitchChange(self, value):
+    def sync(self, widget):
         gobject.source_remove(self.time_id)
         self.time_id = gobject.timeout_add(int(60000 / self.pitch), self.time_out_cb)
         self.next(self.image)
+
+    def fullscreen(self, widget):
+        self.window.fullscreen()
+
+    def unfullscreen(self, widget):
+        self.window.unfullscreen()
+
+    def keyPress(self, widget, event):
+        key = keyval_name(event.keyval)
+        if key == 'Escape':
+            self.unfullscreen(self.window)
+        if key == 'Up':
+            pitch = self.pitchScale.get_value()
+            self.pitchScale.set_value(pitch + 1)  
+        if key == 'Down':
+            pitch = self.pitchScale.get_value()
+            self.pitchScale.set_value(pitch - 1)
+        if key == 's':
+            self.sync(self.window)
+        if key == 'f':
+            self.fullscreen(self.window)
 
     def time_out_cb(self):
         self.flickroll_loop()
