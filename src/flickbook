@@ -36,9 +36,10 @@ class FlickBook:
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.wTree.get_widget("mainWindow")
         self.image = self.wTree.get_widget("image")
-        self.tagEntry = self.wTree.get_widget("tagEntry")
+        self.pitchScale = self.wTree.get_widget("pitchScale")
 
         dic = { "on_newThreadButton_clicked" : self.next,
+            "on_pitchScale_value_changed" : self.pitchChange,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
 
@@ -47,6 +48,8 @@ class FlickBook:
 
         self.flickroll = flickroll.FlickRoll()
         self.flickroll.get_first_photo()
+        self.pitch = 2
+        self.loop_amount = 42
         self.c = 0
         self.i = 0
         self.flickroll_loop()
@@ -57,7 +60,7 @@ class FlickBook:
         if os.path.exists(file):
             pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, 600, 600)
             self.image.set_from_pixbuf(pixbuf) 
-        if self.c < 20:
+        if self.c < self.loop_amount:
             self.c += 1
         else:
             self.c = 0
@@ -68,15 +71,23 @@ class FlickBook:
     def flickroll_loop(self):
         filename = '%d.jpg' % self.i
         self.flickroll.get_next_photo(filename)
-        if self.i < 20:
+        if self.i < self.loop_amount:
             self.i = self.i + 1
         else:
             self.i = 0
 
+    def pitchChange(self, value):
+        pass
+
     def time_out_cb(self):
         self.flickroll_loop()
         self.next(self.image)
-        return True
+        if self.pitch != self.pitchScale.get_value():
+            self.pitch = self.pitchScale.get_value()
+            self.time_id = gobject.timeout_add((self.pitch * 1000), self.time_out_cb)
+            return False
+        else:
+            return True
 
 if __name__ == "__main__":
     flickbook = FlickBook()
