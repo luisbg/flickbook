@@ -39,6 +39,7 @@ class FlickBook:
         self.window = self.wTree.get_widget("mainWindow")
         self.image = self.wTree.get_widget("image")
         self.pitchScale = self.wTree.get_widget("pitchScale")
+        self.controls = self.wTree.get_widget("controlsBox")
 
         dic = { "on_newThreadButton_clicked" : self.next,
             "on_syncButton_clicked" : self.sync,
@@ -87,9 +88,11 @@ class FlickBook:
 
     def fullscreen(self, widget):
         self.window.fullscreen()
+        self.controls.hide()
 
     def unfullscreen(self, widget):
         self.window.unfullscreen()
+        self.controls.show()
 
     def keyPress(self, widget, event):
         key = keyval_name(event.keyval)
