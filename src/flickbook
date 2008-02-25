@@ -48,7 +48,7 @@ class FlickBook:
 
         self.flickroll = flickroll.FlickRoll()
         self.flickroll.get_first_photo()
-        self.pitch = 2
+        self.pitch = 30
         self.loop_amount = 42
         self.c = 0
         self.i = 0
@@ -84,7 +84,7 @@ class FlickBook:
         self.next(self.image)
         if self.pitch != self.pitchScale.get_value():
             self.pitch = self.pitchScale.get_value()
-            self.time_id = gobject.timeout_add((self.pitch * 1000), self.time_out_cb)
+            self.time_id = gobject.timeout_add(int(60000 / self.pitch), self.time_out_cb)
             return False
         else:
             return True
