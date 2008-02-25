@@ -24,7 +24,6 @@ try:
     import flickroll
     import threading
     import time
-    from gtk.gdk import keyval_name
 except:
     import_error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, \
         gtk.BUTTONS_OK, ('You need to install python bindings for gtk and/or glade \
@@ -57,13 +56,15 @@ class FlickBook:
         self.loop_amount = 42
         self.c = 0
         self.i = 0
+        self.height = 600
+        self.width = 600
         self.flickroll_loop()
         self.time_id = gobject.timeout_add(2000, self.time_out_cb)
 
     def next(self, widget):
         file = '%d.jpg' % self.c
         if os.path.exists(file):
-            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, 600, 600)
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.width, self.height)
             self.image.set_from_pixbuf(pixbuf) 
         if self.c < self.loop_amount:
             self.c += 1
@@ -89,13 +90,19 @@ class FlickBook:
     def fullscreen(self, widget):
         self.window.fullscreen()
         self.controls.hide()
+        self.width = gtk.gdk.screen_width()
+        self.height = gtk.gdk.screen_height()
+        self.next(self.window)
 
     def unfullscreen(self, widget):
         self.window.unfullscreen()
         self.controls.show()
+        self.width = 600
+        self.height = 600
+        self.next(self.window)
 
     def keyPress(self, widget, event):
-        key = keyval_name(event.keyval)
+        key = gtk.gdk.keyval_name(event.keyval)
         if key == 'Escape':
             self.unfullscreen(self.window)
         if key == 'Up':
