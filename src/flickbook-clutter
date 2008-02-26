@@ -67,6 +67,17 @@ class FlickBook:
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.width, self.height)
         self.image.set_opacity(0x00)
         self.image.set_pixbuf(pixbuf)
+        width = self.image.get_size()[0]
+        height = self.image.get_size()[1]
+        if width > height:
+            ratio = width / float(self.width)
+        else:
+            ratio = height / float(self.height)
+        width = width * ratio
+        x_pos = 300 - (width / 2)
+        height = height * ratio
+        y_pos = 300 - (height / 2)
+        self.image.set_position(int(x_pos), int(y_pos))
 
     def new_thread(self, widget):
         self.flickroll.get_first_photo()
