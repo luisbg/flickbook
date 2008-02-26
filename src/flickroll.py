@@ -42,7 +42,7 @@ class FlickRoll(threading.Thread):
             self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
         threading.Thread(target=get_first_photo_in_thread).start()
 
-    def get_next_photo(self, filename):
+    def get_next_photo(self, filename, size):
         def get_next_photo_in_thread():
             try:
                 photo_number = random.randint(0, len(self.explore.photos[0].photo) - 1)
@@ -53,21 +53,25 @@ class FlickRoll(threading.Thread):
                 self.id = self.explore.photos[0].photo[photo_number]['id']
                 photos = self.flickr_api.photos_getSizes(photo_id=self.id)
 
-                medium = len(photos.sizes[0].size) - 1
-                source = photos.sizes[0].size[medium]['source']
+                if size == 'large':
+                   size_num = 4
+                elif size == 'medium':
+                   size_num = 3
+                else:
+                   size_num = 0
+                source = photos.sizes[0].size[size_num]['source']
                 download.Download(source, filename).run()
 
                 self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
                 self.search_photo()
-            except AttributeError:
+            except:
                 self.get_first_photo()
-            except FlickrError:
-                self.get_first_photo()
+                self.get_next_photo(filename, size)
         threading.Thread(target=get_next_photo_in_thread).start()
 
 if __name__ == "__main__":
     flickroll = FlickRoll() 
     flickroll.get_first_photo()
     for element in (range(42)):
-        flickroll.get_next_photo('%d.jpg' % element)
+        flickroll.get_next_photo('%d.jpg' % element, 'large')
         print element

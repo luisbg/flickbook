@@ -26,8 +26,10 @@ class FlickBook:
         self.stage = clutter.stage_get_default()
         if fullscreen:
             self.stage.fullscreen()
+            self.photosize = 'large'
         else:
             self.stage.set_size(600,600)
+            self.photosize = 'medium'
         self.width = self.stage.get_size()[0]
         self.height = self.stage.get_size()[1]
         self.stage.set_color(clutter.color_parse("#000000"))
@@ -105,7 +107,7 @@ class FlickBook:
 
     def flickroll_loop(self):
         filename = '%d.jpg' % self.i
-        self.flickroll.get_next_photo(filename)
+        self.flickroll.get_next_photo(filename, self.photosize)
         if self.i < self.loop_amount:
             self.i += 1
         else:
