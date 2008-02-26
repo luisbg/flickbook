@@ -30,10 +30,11 @@ class FlickBook:
         self.loop_amount = 42
         self.width = 600
         self.height = 600
+        self.fps = 50
         self.flickroll = flickroll.FlickRoll()
         self.flickroll.get_first_photo()
 
-        self.timeline = clutter.Timeline(100,30)
+        self.timeline = clutter.Timeline(200,self.fps)
         self.timeline.set_loop(False)
         self.timeline.connect("completed", self.timeline_completed)
         self.timeline.connect("started", self.next)
@@ -91,7 +92,15 @@ class FlickBook:
             self.i = 0
 
     def key_press(self, widget, event):
-        clutter.main_quit()
+        key = gtk.gdk.keyval_name(event.keyval)
+        if key == 'q' or key == 'Escape':
+            clutter.main_quit()
+        if key == 'Up':
+            self.fps += 1
+            self.timeline.set_speed(self.fps)
+        if key == 'Down':
+            self.fps -= 1
+            self.timeline.set_speed(self.fps)
 
     def timeline_completed(self, data):
         self.start_depth = 0
