@@ -52,7 +52,7 @@ class FlickBook:
             "on_fullscreenButton_clicked" : self.fullscreen,
             "on_key_press_event" : self.keyPress,
             "on_modeButton_clicked" : self.mode_switch,
-            "on_mainWindow_destroy" : gtk.main_quit}
+            "on_mainWindow_destroy" : self.quit}
         self.wTree.signal_autoconnect(dic)
 
         black = gtk.gdk.rgb_get_colormap().alloc_color('black')
@@ -155,6 +155,11 @@ class FlickBook:
             self.fullscreen(self.window)
         if key == 'm':
             self.mode_switch(self.window)
+        if key == 'q':
+            self.quit(self.window)	
+
+    def quit(self, widget):
+        gtk.main_quit()
 
     def mode_switch(self, widget):
         if self.mode == True:

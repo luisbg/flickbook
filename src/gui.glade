@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.0 on Tue Feb 26 16:35:37 2008 -->
+<!--Generated with glade3 3.4.0 on Tue Feb 26 16:56:30 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainWindow">
     <property name="visible">True</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
     <property name="title" translatable="yes">flickbook</property>
     <property name="icon">icon.jpg</property>
-    <property name="opacity">0.5</property>
     <signal name="key_press_event" handler="on_key_press_event"/>
     <signal name="destroy" handler="on_mainWindow_destroy"/>
     <child>
@@ -156,7 +155,16 @@
             <property name="n_rows">2</property>
             <property name="n_columns">2</property>
             <child>
-              <widget class="GtkImage" id="image1">
+              <widget class="GtkImage" id="image0">
+                <property name="width_request">300</property>
+                <property name="height_request">300</property>
+                <property name="visible">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <property name="stock">gtk-missing-image</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkImage" id="image3">
                 <property name="width_request">300</property>
                 <property name="height_request">300</property>
                 <property name="visible">True</property>
@@ -164,8 +172,8 @@
                 <property name="stock">gtk-missing-image</property>
               </widget>
               <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
               </packing>
             </child>
             <child>
@@ -184,7 +192,7 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkImage" id="image3">
+              <widget class="GtkImage" id="image1">
                 <property name="width_request">300</property>
                 <property name="height_request">300</property>
                 <property name="visible">True</property>
@@ -192,18 +200,9 @@
                 <property name="stock">gtk-missing-image</property>
               </widget>
               <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
               </packing>
-            </child>
-            <child>
-              <widget class="GtkImage" id="image0">
-                <property name="width_request">300</property>
-                <property name="height_request">300</property>
-                <property name="visible">True</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="stock">gtk-missing-image</property>
-              </widget>
             </child>
           </widget>
           <packing>
