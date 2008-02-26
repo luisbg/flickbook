@@ -36,9 +36,10 @@ class FlickBook:
         self.gladefile = "gui.glade"
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.wTree.get_widget("mainWindow")
-        self.image = self.wTree.get_widget("image")
         self.pitchScale = self.wTree.get_widget("pitchScale")
         self.controls = self.wTree.get_widget("controlsBox")
+        self.separator = self.wTree.get_widget("hseparator")
+        self.image = self.wTree.get_widget("image")
 
         dic = { "on_newThreadButton_clicked" : self.next,
             "on_syncButton_clicked" : self.sync,
@@ -46,6 +47,9 @@ class FlickBook:
             "on_key_press_event" : self.keyPress,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
+
+        black = gtk.gdk.rgb_get_colormap().alloc_color('black')
+        self.window.modify_bg(gtk.STATE_NORMAL, black)
 
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size('../files/flickbook.jpg', 600, 600)
         self.image.set_from_pixbuf(pixbuf)
@@ -65,7 +69,7 @@ class FlickBook:
         file = '%d.jpg' % self.c
         if os.path.exists(file):
             pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.width, self.height)
-            self.image.set_from_pixbuf(pixbuf) 
+            self.image.set_from_pixbuf(pixbuf)
         if self.c < self.loop_amount:
             self.c += 1
         else:
@@ -90,6 +94,7 @@ class FlickBook:
     def fullscreen(self, widget):
         self.window.fullscreen()
         self.controls.hide()
+        self.separator.hide()
         self.width = gtk.gdk.screen_width()
         self.height = gtk.gdk.screen_height()
         self.next(self.window)
@@ -97,6 +102,7 @@ class FlickBook:
     def unfullscreen(self, widget):
         self.window.unfullscreen()
         self.controls.show()
+        self.separator.show()
         self.width = 600
         self.height = 600
         self.next(self.window)
