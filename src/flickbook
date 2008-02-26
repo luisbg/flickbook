@@ -40,11 +40,18 @@ class FlickBook:
         self.controls = self.wTree.get_widget("controlsBox")
         self.separator = self.wTree.get_widget("hseparator")
         self.image = self.wTree.get_widget("image")
+        self.imageBox = self.wTree.get_widget("imageBox")
+        self.splitBox = self.wTree.get_widget("splitBox")
+        self.images = [self.wTree.get_widget("image0"), \
+                       self.wTree.get_widget("image1"), \
+                       self.wTree.get_widget("image2"), \
+                       self.wTree.get_widget("image3") ]
 
         dic = { "on_newThreadButton_clicked" : self.next,
             "on_syncButton_clicked" : self.sync,
             "on_fullscreenButton_clicked" : self.fullscreen,
             "on_key_press_event" : self.keyPress,
+            "on_modeButton_clicked" : self.mode_switch,
             "on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
 
@@ -53,6 +60,11 @@ class FlickBook:
 
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size('../files/flickbook.jpg', 600, 600)
         self.image.set_from_pixbuf(pixbuf)
+        pixbuf1 = gtk.gdk.pixbuf_new_from_file_at_size('../files/flickbook.jpg', 300, 300)
+        self.images[0].set_from_pixbuf(pixbuf1)
+        self.images[1].set_from_pixbuf(pixbuf1)
+        self.images[2].set_from_pixbuf(pixbuf1)
+        self.images[3].set_from_pixbuf(pixbuf1)
 
         self.flickroll = flickroll.FlickRoll()
         self.flickroll.get_first_photo()
@@ -62,18 +74,34 @@ class FlickBook:
         self.i = 0
         self.height = 600
         self.width = 600
+        self.split_height = 300
+        self.split_width = 300
+        self.mode = True
+        self.d = 0
         self.flickroll_loop()
         self.time_id = gobject.timeout_add(2000, self.time_out_cb)
 
     def next(self, widget):
         file = '%d.jpg' % self.c
         if os.path.exists(file):
-            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.width, self.height)
-            self.image.set_from_pixbuf(pixbuf)
+            self.image_change(file)
         if self.c < self.loop_amount:
             self.c += 1
         else:
             self.c = 0
+
+    def image_change(self, file):
+        if self.mode:
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.width, self.height)
+            self.image.set_from_pixbuf(pixbuf)
+        else:
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(file, self.split_width, self.split_height)
+            self.images[self.d].set_from_pixbuf(pixbuf)
+            if self.d < 3:
+                self.d += 1
+            else:
+                self.d = 0
+            
 
     def new_thread(self, widget):
         self.flickroll.get_first_photo()
@@ -97,6 +125,8 @@ class FlickBook:
         self.separator.hide()
         self.width = gtk.gdk.screen_width()
         self.height = gtk.gdk.screen_height()
+        self.split_width = self.width / 2
+        self.split_height = self.width / 2
         self.next(self.window)
 
     def unfullscreen(self, widget):
@@ -105,6 +135,8 @@ class FlickBook:
         self.separator.show()
         self.width = 600
         self.height = 600
+        self.split_width = 300
+        self.split_height = 300
         self.next(self.window)
 
     def keyPress(self, widget, event):
@@ -121,6 +153,18 @@ class FlickBook:
             self.sync(self.window)
         if key == 'f':
             self.fullscreen(self.window)
+        if key == 'm':
+            self.mode_switch(self.window)
+
+    def mode_switch(self, widget):
+        if self.mode == True:
+            self.imageBox.hide()
+            self.splitBox.show()
+            self.mode = False
+        else:
+            self.imageBox.show()
+            self.splitBox.hide()
+            self.mode = True
 
     def time_out_cb(self):
         self.flickroll_loop()
