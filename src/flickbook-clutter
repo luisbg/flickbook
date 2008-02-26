@@ -88,10 +88,12 @@ class FlickBook:
         self.image.set_pixbuf(pixbuf)
         width = self.image.get_size()[0]
         height = self.image.get_size()[1]
-        if width > height:
-            ratio = width / float(self.width)
+        ratioW = width / float(self.width)
+        ratioH = height / float(self.height)
+        if ratioW > ratioH:
+            ratio = ratioW
         else:
-            ratio = height / float(self.height)
+            ratio = ratioH
         width = width * ratio
         x_pos = (self.width / 2) - (width / 2)
         height = height * ratio

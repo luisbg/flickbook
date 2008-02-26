@@ -53,7 +53,7 @@ class FlickRoll(threading.Thread):
                 self.id = self.explore.photos[0].photo[photo_number]['id']
                 photos = self.flickr_api.photos_getSizes(photo_id=self.id)
 
-                medium = len(photos.sizes[0].size) - 2
+                medium = len(photos.sizes[0].size) - 1
                 source = photos.sizes[0].size[medium]['source']
                 download.Download(source, filename).run()
 
