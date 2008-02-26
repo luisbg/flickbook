@@ -22,8 +22,6 @@ try:
     import os
     from gtk import glade
     import flickroll
-    import threading
-    import time
 except:
     import_error = gtk.MessageDialog (None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, \
         gtk.BUTTONS_OK, ('You need to install python bindings for gtk and/or glade \
@@ -109,7 +107,7 @@ class FlickBook:
         filename = '%d.jpg' % self.i
         self.flickroll.get_next_photo(filename)
         if self.i < self.loop_amount:
-            self.i = self.i + 1
+            self.i += 1
         else:
             self.i = 0
 
