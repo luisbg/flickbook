@@ -101,7 +101,6 @@ class FlickBook:
                 self.d += 1
             else:
                 self.d = 0
-            
 
     def new_thread(self, widget):
         self.flickroll.get_first_photo()
@@ -160,6 +159,7 @@ class FlickBook:
 
     def quit(self, widget):
         gtk.main_quit()
+        exit()
 
     def mode_switch(self, widget):
         if self.mode == True:

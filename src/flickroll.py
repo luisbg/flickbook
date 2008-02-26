@@ -67,10 +67,7 @@ class FlickRoll(threading.Thread):
 
 if __name__ == "__main__":
     flickroll = FlickRoll() 
-    explore = flickroll.get_first_photo()
-    c = 0
-    while c < 50:
-        filename = '%d.jpg' % c
-        flickroll.get_next_photo(filename)
-        print c
-        c += 1
+    flickroll.get_first_photo()
+    for element in (range(42)):
+        flickroll.get_next_photo('%d.jpg' % element)
+        print element
