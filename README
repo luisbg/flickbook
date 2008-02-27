@@ -1,4 +1,17 @@
-Need to have installed Beej's Python Flickr API:
-http://flickrapi.sourceforge.net/
+Flickbook
+    Automatic slideshow made by searching flickr's explore with recursive 
+    tags. thought for automatic web, one time only, time specific, video 
+    art/installation.
+
+Need to have installed: 
+    python :         http://www.python.org
+    pygtk :          http://www.gtk.org/
+                     http://www.pygtk.org/
+
+    Beej's Python Flickr API:
+                     http://flickrapi.sourceforge.net/
+
+    python-clutter : http://www.clutter-project.org/
+
 
 Please visit https://edge.launchpad.net/flickbook/ for more information.
