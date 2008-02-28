@@ -32,11 +32,11 @@ class FlickBook:
             print str(err) # will print something like "option -a not recognized"
             sys.exit(2)
 
+        fullscreen = False
+        self.mode = 1
         for o, a in opts:
             if o == "-f":
                fullscreen = True
-            else:
-               fullscreen = False
             if o == "-m":
                 self.mode = int(args[0])
             else:
@@ -77,7 +77,7 @@ class FlickBook:
         if self.mode == 1:
             self.behave = modes.Slideshow(self.timeline, self.image)
         elif self.mode == 2:
-            self.behave = modes.Test(self.timeline, self.image)
+            self.behave = modes.Rotate(self.timeline, self.image)
 
         self.stage.add(self.image)
         self.stage.show_all()
@@ -115,7 +115,6 @@ class FlickBook:
 
     def flickroll_loop(self):
         filename = '%d.jpg' % self.i
-        print filename
         self.flickroll.get_next_photo(filename, self.photosize)
         if self.i < self.loop_amount:
             self.i += 1
@@ -135,7 +134,7 @@ class FlickBook:
         if key == '1':
             self.behave = modes.Slideshow(self.timeline, self.image)
         if key == '2':
-            self.behave = modes.Test(self.timeline, self.image)
+            self.behave = modes.Rotate(self.timeline, self.image)
 
     def timeline_completed(self, data):
         self.timeline.rewind()

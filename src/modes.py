@@ -24,19 +24,19 @@ class Slideshow():
         self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
         alphaOpacity = clutter.Alpha(timeline, clutter.sine_inc_func)
         self.opacity = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
- 
+
         self.depth.apply(image)
         self.opacity.apply(image)
 
-class Test():
+class Rotate():
     def __init__(self, timeline, image):
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
-        self.depth = clutter.BehaviourDepth(alphaDepth, 0, 200)
+        self.depth = clutter.BehaviourDepth(alphaDepth, 40, 0)
         alphaOpacity = clutter.Alpha(timeline, clutter.sine_inc_func)
-        self.opacity = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        self.opacity = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
         alphaRotate = clutter.Alpha(timeline, clutter.smoothstep_inc_func)
-        self.rotate = clutter.BehaviourRotate(alphaRotate, 1, 0)
-        self.rotate.set_property("angle-end", 240)
+        self.rotate = clutter.BehaviourRotate(alphaRotate, 0, 1)
+        self.rotate.set_property("angle-end", 350)
  
         self.depth.apply(image)
         self.opacity.apply(image)
