@@ -54,20 +54,20 @@ class Slideshow():
 
 class Rotate():
     def __init__(self, timeline, fps, image):
-        self.timeOpA = clutter.Timeline(50, fps)
-        self.timeOpB = clutter.Timeline(150, fps)
+        self.timeOpA = clutter.Timeline(185, fps)
+        self.timeOpB = clutter.Timeline(15, fps)
         self.cin1 = timeline.connect("started", self.timeOpA_start)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
 
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
-        self.depth = clutter.BehaviourDepth(alphaDepth, 40, 0)
+        self.depth = clutter.BehaviourDepth(alphaDepth, -1000, 10)
         alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
         self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
         alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
         self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
         alphaRotate = clutter.Alpha(timeline, clutter.smoothstep_inc_func)
-        self.rotate = clutter.BehaviourRotate(alphaRotate, 0, 1)
-        self.rotate.set_property("angle-end", 350)
+        self.rotate = clutter.BehaviourRotate(alphaRotate, 0, 0)
+        self.rotate.set_property("angle-end", 30)
  
         self.depth.apply(image)
         self.rotate.apply(image)
