@@ -19,25 +19,113 @@ import sys
 import clutter
 
 class Slideshow():
-    def __init__(self, timeline, image):
+    def __init__(self, timeline, fps, image):
+        self.timeOpA = clutter.Timeline(150, fps)
+        self.timeOpB = clutter.Timeline(50, fps)
+        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
+
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
         self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
-        alphaOpacity = clutter.Alpha(timeline, clutter.sine_inc_func)
-        self.opacity = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
 
         self.depth.apply(image)
-        self.opacity.apply(image)
+        self.opacityUp.apply(image)
+        self.opacityDown.apply(image)
+
+    def timeOpA_start(self, data):
+        self.timeOpA.start()
+        self.timeOpB.rewind()
+
+    def timeOpB_start(self, data):
+        self.timeOpA.rewind()
+        self.timeOpB.start()
+
+    def set_speed(self, fps):
+        self.timeOpA.set_speed(fps)
+        self.timeOpB.set_speed(fps)
+
+    def disconnect(self, timeline):
+        timeline.disconnect(self.cin1)
+        self.timeOpA.disconnect(self.cin2)
 
 class Rotate():
-    def __init__(self, timeline, image):
+    def __init__(self, timeline, fps, image):
+        self.timeOpA = clutter.Timeline(50, fps)
+        self.timeOpB = clutter.Timeline(150, fps)
+        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
+
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
         self.depth = clutter.BehaviourDepth(alphaDepth, 40, 0)
-        alphaOpacity = clutter.Alpha(timeline, clutter.sine_inc_func)
-        self.opacity = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
         alphaRotate = clutter.Alpha(timeline, clutter.smoothstep_inc_func)
         self.rotate = clutter.BehaviourRotate(alphaRotate, 0, 1)
         self.rotate.set_property("angle-end", 350)
  
         self.depth.apply(image)
-        self.opacity.apply(image)
         self.rotate.apply(image)
+        self.opacityUp.apply(image)
+        self.opacityDown.apply(image)
+
+    def timeOpA_start(self, data):
+        self.timeOpA.start()
+        self.timeOpB.rewind()
+
+    def timeOpB_start(self, data):
+        self.timeOpA.rewind()
+        self.timeOpB.start()
+
+    def set_speed(self, fps):
+        self.timeOpA.set_speed(fps)
+        self.timeOpB.set_speed(fps)
+
+    def disconnect(self, timeline):
+        timeline.disconnect(self.cin1)
+        self.timeOpA.disconnect(self.cin2)
+
+class Scroll():
+    def __init__(self, timeline, fps, image, x_pos):
+        self.timeOpA = clutter.Timeline(150, fps)
+        self.timeOpB = clutter.Timeline(50, fps)
+        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
+
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
+
+        knots = ( \
+                ( x_pos, -100 ),   \
+                ( x_pos,  200 ),   \
+        )
+
+        alpha = clutter.Alpha(timeline, clutter.ramp_inc_func)
+        self.path = clutter.BehaviourPath(alpha=alpha, knots=knots)
+        
+        self.path.apply(image)
+        self.opacityUp.apply(image)
+        self.opacityDown.apply(image)
+
+    def timeOpA_start(self, data):
+        self.timeOpA.start()
+        self.timeOpB.rewind()
+
+    def timeOpB_start(self, data):
+        self.timeOpA.rewind()
+        self.timeOpB.start()
+
+    def set_speed(self, fps):
+        self.timeOpA.set_speed(fps)
+        self.timeOpB.set_speed(fps)
+
+    def disconnect(self, timeline):
+        timeline.disconnect(self.cin1)
+        self.timeOpA.disconnect(self.cin2)

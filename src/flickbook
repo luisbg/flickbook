@@ -68,16 +68,19 @@ class FlickBook:
         self.i = 0
         self.loop_amount = 42
         self.fps = 50
+        self.x_pos = 0
+        self.y_pos = 0
         self.flickroll = flickroll.FlickRoll()
 
         self.timeline = clutter.Timeline(200,self.fps)
-        self.timeline.set_loop(True)
         self.timeline.connect("completed", self.timeline_completed)
 
         if self.mode == 1:
-            self.behave = modes.Slideshow(self.timeline, self.image)
+            self.behave = modes.Slideshow(self.timeline, self.fps, self.image)
         elif self.mode == 2:
-            self.behave = modes.Rotate(self.timeline, self.image)
+            self.behave = modes.Rotate(self.timeline, self.fps, self.image)
+        elif self.mode == 3:
+            self.behave = modes.Scroll(self.timeline, self.fps, self.image)
 
         self.stage.add(self.image)
         self.stage.show_all()
@@ -105,10 +108,10 @@ class FlickBook:
         else:
             ratio = ratioH
         width = width * ratio
-        x_pos = (self.width / 2) - (width / 2)
+        self.x_pos = int((self.width / 2) - (width / 2))
         height = height * ratio
-        y_pos = (self.height / 2) - (height / 2)
-        self.image.set_position(int(x_pos), int(y_pos))
+        self.y_pos = int((self.height / 2) - (height / 2))
+        self.image.set_position(self.x_pos, self.y_pos)
 
     def new_thread(self, widget):
         self.flickroll.get_first_photo()
@@ -126,15 +129,25 @@ class FlickBook:
         if key == 'Up':
             self.fps += 1
             self.timeline.set_speed(self.fps)
+            self.behave.set_speed(self.fps)
         if key == 'Down':
             self.fps -= 1
             self.timeline.set_speed(self.fps)
+            self.behave.set_speed(self.fps)
         if key == 'q' or key == 'Escape':
             clutter.main_quit()
         if key == '1':
-            self.behave = modes.Slideshow(self.timeline, self.image)
+            self.behave.disconnect(self.timeline)
+            self.behave = modes.Slideshow(self.timeline, self.fps, \
+                                          self.image)
         if key == '2':
-            self.behave = modes.Rotate(self.timeline, self.image)
+            self.behave.disconnect(self.timeline)
+            self.behave = modes.Rotate(self.timeline, self.fps, \
+                                       self.image)
+        if key == '3':
+            self.behave.disconnect(self.timeline)
+            self.behave = modes.Scroll(self.timeline, self.fps, \
+                                       self.image, self.x_pos)
 
     def timeline_completed(self, data):
         self.timeline.rewind()
