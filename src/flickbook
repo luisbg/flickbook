@@ -16,38 +16,33 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys, getopt
+import sys, optparse
 import clutter
 import gtk
 import gobject
 import random
-import flickroll
-import modes
+import flickroll.core
+import flickroll.modes
 
 class FlickBook:
     def __init__(self):
-        try:
-            opts, args = getopt.getopt(sys.argv[1:], "ho:fm", ["help", "fullscreen"])
-        except getopt.GetoptError, err:
-            # print help information and exit:
-            print str(err) # will print something like "option -a not recognized"
-            sys.exit(2)
 
-        fullscreen = False
-        self.mode = 1
-        for o, a in opts:
-            if o == "-f":
-               fullscreen = True
-            if o == "-m":
-                self.mode = int(args[0])
-            else:
-                self.mode = 1
-            if o in ("-h", "--help"):
-               self.usage()
-               sys.exit()
+	useage = """ flickbook -f -m [number]
+	  While running:'
+          Esc key or q   : quit flickbook'
+          up key         : speed up image switching.'
+	  down key       : slow down image switching.'"""
+	
+	parser = optparse.OptionParser(useage=useage)
+	parser.add_option("-f", "--fullscreen", action="store_true", dest="fullscreen", help="Fullscreen mode", default=False)
+	parser.add_option("-m", "--mode", action="store", type="int", dest="mode", help="Animation mode")
+	(options, args) = parser.parse_options()
 
+	self.fullscreen = options.fullscreen
+	self.mode = options.mode
+      
         self.stage = clutter.stage_get_default()
-        if fullscreen:
+        if self.fullscreen:
             self.stage.fullscreen()
             self.photosize = 'large'
         else:
@@ -71,17 +66,17 @@ class FlickBook:
         self.fps = 50
         self.x_pos = 0
         self.y_pos = 0
-        self.flickroll = flickroll.FlickRoll()
+        self.flickroll = flickroll.core.FlickRoll()
 
         self.timeline = clutter.Timeline(200,self.fps)
         self.timeline.connect("completed", self.timeline_completed)
 
         if self.mode == 1:
-            self.behave = modes.Slideshow(self.timeline, self.fps, self.image)
+            self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, self.image)
         elif self.mode == 2:
-            self.behave = modes.Rotate(self.timeline, self.fps, self.image)
+            self.behave = flickroll.modes.Rotate(self.timeline, self.fps, self.image)
         elif self.mode == 3:
-            self.behave = modes.Scroll(self.timeline, self.fps, self.image)
+            self.behave = flickroll.modes.Scroll(self.timeline, self.fps, self.image)
 
         self.stage.add(self.image)
         self.stage.show_all()
@@ -115,11 +110,11 @@ class FlickBook:
         self.image.set_position(self.x_pos, self.y_pos)
 
     def new_thread(self, widget):
-        self.flickroll.get_first_photo()
+        self.flickroll.core.get_first_photo()
 
     def flickroll_loop(self):
         filename = '%d.jpg' % self.i
-        self.flickroll.get_next_photo(filename, self.photosize)
+        self.flickroll.core.get_next_photo(filename, self.photosize)
         if self.i < self.loop_amount:
             self.i += 1
         else:
@@ -139,15 +134,15 @@ class FlickBook:
             clutter.main_quit()
         if key == '1':
             self.behave.disconnect(self.timeline)
-            self.behave = modes.Slideshow(self.timeline, self.fps, \
+            self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, \
                                           self.image)
         if key == '2':
             self.behave.disconnect(self.timeline)
-            self.behave = modes.Rotate(self.timeline, self.fps, \
+            self.behave = flickroll.modes.Rotate(self.timeline, self.fps, \
                                        self.image)
         if key == '3':
             self.behave.disconnect(self.timeline)
-            self.behave = modes.Scroll(self.timeline, self.fps, \
+            self.behave = flickroll.modes.Scroll(self.timeline, self.fps, \
                                        self.image, self.x_pos)
 
         if key == '0':
@@ -159,28 +154,19 @@ class FlickBook:
              self.behave.disconnect(self.timeline)
              random_number = random.randint(1, 3)
              if random_number == 1:
-                 self.behave = modes.Slideshow(self.timeline, self.fps, \
+                 self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, \
                                                self.image)
              elif random_number == 2:
-                 self.behave = modes.Rotate(self.timeline, self.fps, \
+                 self.behave = flickroll.modes.Rotate(self.timeline, self.fps, \
                                                self.image)
              elif random_number == 3:
-                 self.behave = modes.Scroll(self.timeline, self.fps, \
+                 self.behave = flickroll.modes.Scroll(self.timeline, self.fps, \
                                                self.image, self.x_pos)
         self.timeline.rewind()
         self.timeline.start()
         self.flickroll_loop()
         self.next(self.image)
-
-    def usage(self):
-        print '    -f             : For fullscreen mode.'
-        print '    -m [ number ]  : For animation mode.'
-        print '    -h or --help   : For this help.'
-        print ' While running:'
-        print '    Esc key or q   : quit flickbook'
-        print '    up key         : speed up image switching.'
-        print '    down key       : slow down image switching.' 
-
+	
 if __name__ == "__main__":
     flickbook = FlickBook()
     gtk.gdk.threads_init()
