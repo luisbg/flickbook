@@ -27,16 +27,16 @@ import flickroll.modes
 class FlickBook:
     def __init__(self):
 
-	useage = """ flickbook -f -m [number]
+	usage = """ flickbook -f -m [number]
 	  While running:'
           Esc key or q   : quit flickbook'
           up key         : speed up image switching.'
 	  down key       : slow down image switching.'"""
 	
-	parser = optparse.OptionParser(useage=useage)
+	parser = optparse.OptionParser(usage=usage)
 	parser.add_option("-f", "--fullscreen", action="store_true", dest="fullscreen", help="Fullscreen mode", default=False)
-	parser.add_option("-m", "--mode", action="store", type="int", dest="mode", help="Animation mode")
-	(options, args) = parser.parse_options()
+	parser.add_option("-m", "--mode", action="store", type="int", dest="mode", help="Animation mode", default=1)
+	(options, args) = parser.parse_args()
 
 	self.fullscreen = options.fullscreen
 	self.mode = options.mode
@@ -110,11 +110,11 @@ class FlickBook:
         self.image.set_position(self.x_pos, self.y_pos)
 
     def new_thread(self, widget):
-        self.flickroll.core.get_first_photo()
+        self.flickroll.get_first_photo()
 
     def flickroll_loop(self):
         filename = '%d.jpg' % self.i
-        self.flickroll.core.get_next_photo(filename, self.photosize)
+        self.flickroll.get_next_photo(filename, self.photosize)
         if self.i < self.loop_amount:
             self.i += 1
         else:
