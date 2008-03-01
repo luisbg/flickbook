@@ -77,6 +77,8 @@ class FlickBook:
             self.behave = flickroll.modes.Rotate(self.timeline, self.fps, self.image)
         elif self.mode == 3:
             self.behave = flickroll.modes.Scroll(self.timeline, self.fps, self.image)
+        elif self.mode == 0:
+            self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, self.image)
 
         self.stage.add(self.image)
         self.stage.show_all()
