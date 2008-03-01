@@ -39,7 +39,10 @@ class FlickRoll(threading.Thread):
 
     def get_first_photo(self):
         def get_first_photo_in_thread():
-            self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
+            try:
+                self.explore = self.flickr_api.interestingness_getList(api_key = self.api_key)
+            except:
+                pass
         threading.Thread(target=get_first_photo_in_thread).start()
 
     def get_next_photo(self, filename, size):
@@ -67,7 +70,10 @@ class FlickRoll(threading.Thread):
             except:
                 self.get_first_photo()
                 self.get_next_photo(filename, size)
-        threading.Thread(target=get_next_photo_in_thread).start()
+        try:
+            threading.Thread(target=get_next_photo_in_thread).start()
+        except:
+            pass
 
 if __name__ == "__main__":
     flickroll = FlickRoll() 
