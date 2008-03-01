@@ -129,3 +129,38 @@ class Scroll():
     def disconnect(self, timeline):
         timeline.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
+
+class SlideshowText():
+    def __init__(self, timeline, fps, image):
+        self.timeOpA = clutter.Timeline(150, fps)
+        self.timeOpB = clutter.Timeline(50, fps)
+        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
+
+        alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
+        self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
+
+        self.depth.apply(image)
+        self.opacityUp.apply(image)
+        self.opacityDown.apply(image)
+
+    def timeOpA_start(self, data):
+        self.timeOpA.start()
+        self.timeOpB.rewind()
+
+    def timeOpB_start(self, data):
+        self.timeOpA.rewind()
+        self.timeOpB.start()
+
+    def set_speed(self, fps):
+        self.timeOpA.set_speed(fps)
+        self.timeOpB.set_speed(fps)
+
+    def disconnect(self, timeline):
+        timeline.disconnect(self.cin1)
+        self.timeOpA.disconnect(self.cin2)
+
