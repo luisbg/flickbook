@@ -21,37 +21,44 @@ import random
 
 class Slideshow():
     def __init__(self, timeline, fps, image):
-        self.timeOpA = clutter.Timeline(150, fps)
-        self.timeOpB = clutter.Timeline(50, fps)
-        self.cin1 = timeline.connect("started", self.timeOpA_start)
-        self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
+        self.timeOp_black = clutter.Timeline(5, fps)
+        self.timeOpUp = clutter.Timeline(150, fps)
+        self.timeOpDown = clutter.Timeline(45, fps)
+        self.cin = timeline.connect("started", self.timeOp_black_start, image)
+        self.cinUp = self.timeOp_black.connect("completed", self.timeOpUp_start, image)
+        self.cinDown = self.timeOpUp.connect("completed", self.timeOpDown_start, image)
 
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
         self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
-        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        alphaOpacity = clutter.Alpha(self.timeOpUp, clutter.sine_inc_func)
         self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
-        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        alphaOpacity = clutter.Alpha(self.timeOpDown, clutter.sine_inc_func)
         self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
 
-        self.depth.apply(image)
         self.opacityUp.apply(image)
         self.opacityDown.apply(image)
+        self.depth.apply(image)
 
-    def timeOpA_start(self, data):
-        self.timeOpA.start()
-        self.timeOpB.rewind()
+    def timeOp_black_start(self, data, image): 
+        image.hide()
+        self.timeOp_black.start()
 
-    def timeOpB_start(self, data):
-        self.timeOpA.rewind()
-        self.timeOpB.start()
+    def timeOpUp_start(self, data, image):
+        image.show()
+        self.timeOpUp.start()
+        self.timeOpDown.rewind()
+
+    def timeOpDown_start(self, data, image):
+        self.timeOpUp.rewind()
+        self.timeOpDown.start()
 
     def set_speed(self, fps):
-        self.timeOpA.set_speed(fps)
-        self.timeOpB.set_speed(fps)
+        self.timeOpUp.set_speed(fps)
+        self.timeOpDown.set_speed(fps)
 
     def disconnect(self, timeline):
-        timeline.disconnect(self.cin1)
-        self.timeOpA.disconnect(self.cin2)
+        timeline.disconnect(self.cinUp)
+        self.timeOpUp.disconnect(self.cinDown)
 
 class Rotate():
     def __init__(self, timeline, fps, image):
@@ -131,7 +138,7 @@ class Scroll():
         timeline.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
 
-class ScrollText():
+class SlideText():
     def __init__(self, timeline, fps, image, label):
         f = open('../files/english', 'r')
         self.lines = f.readlines()
