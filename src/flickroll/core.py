@@ -71,7 +71,8 @@ class FlickRoll(threading.Thread):
                 self.get_first_photo()
                 self.get_next_photo(filename, size)
         try:
-            threading.Thread(target=get_next_photo_in_thread).start()
+            if threading.activeCount() < 3:
+                threading.Thread(target=get_next_photo_in_thread).start()
         except:
             pass
 
