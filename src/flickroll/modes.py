@@ -219,7 +219,7 @@ class SlideText():
 
     def set_speed(self, fps):
         self.timeline.set_speed(fps)
-        self.timeOpA.set_speed(fsp)
+        self.timeOpA.set_speed(fps)
         self.timeOpB.set_speed(fps)
 
     def disconnect(self, timeline):

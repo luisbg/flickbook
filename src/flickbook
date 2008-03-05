@@ -62,7 +62,7 @@ class FlickBook:
         self.image.set_opacity(0)
 
         self.label = clutter.Label()
-        self.label.set_font_name('Mono 26')
+        self.label.set_font_name('You Are Loved 30')
 
         self.c = 0
         self.i = 0
@@ -147,41 +147,41 @@ class FlickBook:
             self.fps += 1
             self.timeline.set_speed(self.fps)
             self.behave.set_speed(self.fps)
-        if key == 'Down':
+        elif key == 'Down':
             self.fps -= 1
             self.timeline.set_speed(self.fps)
             self.behave.set_speed(self.fps)
-        if key == 'q' or key == 'Escape':
+        elif key == 'q' or key == 'Escape':
             clutter.main_quit()
-        if key == '1':
+        elif key == '1':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, \
                                        self.image)
             self.timeline.rewind()
             self.timeline.start()
             self.mode = 1
-        if key == '2':
+        elif key == '2':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Rotate(self.timeline, self.fps, \
                                        self.image)
             self.timeline.rewind()
             self.timeline.start()
             self.mode = 2
-        if key == '3':
+        elif key == '3':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Scroll(self.timeline, self.fps, \
                                        self.image, self.x_pos)
             self.timeline.rewind()
             self.timeline.start()
             self.mode = 3
-        if key == '4':
+        elif key == '4':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.SlideText(self.timeline, self.fps, \
                                        self.image, self.label)
             self.timeline.rewind()
             self.timeline.start()
-            sef.mode = 4
-        if key == '0':
+            self.mode = 4
+        elif key == '0':
             self.mode = 0
             self.timeline_completed(self.timeline)
 
