@@ -82,6 +82,8 @@ class FlickBook:
             self.behave = flickroll.modes.Scroll(self.timeline, self.fps, self.image, self.x_pos)
         elif self.mode == 0:
             self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, self.image)
+	else:
+            self.mode = 1
 
         self.stage.add(self.image)
         self.stage.add(self.label)
@@ -128,6 +130,7 @@ class FlickBook:
 
     def key_press(self, widget, event):
         key = gtk.gdk.keyval_name(event.keyval)
+        #print key
         if key == 'Up':
             self.fps += 1
             self.timeline.set_speed(self.fps)
@@ -142,22 +145,31 @@ class FlickBook:
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Slideshow(self.timeline, self.fps, \
                                        self.image)
+            self.timeline.rewind()
+            self.timeline.start()
         if key == '2':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Rotate(self.timeline, self.fps, \
                                        self.image)
+            self.timeline.rewind()
+            self.timeline.start()
         if key == '3':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.Scroll(self.timeline, self.fps, \
                                        self.image, self.x_pos)
+            self.timeline.rewind()
+            self.timeline.start()
         if key == '4':
             self.behave.disconnect(self.timeline)
             self.behave = flickroll.modes.SlideText(self.timeline, self.fps, \
                                        self.image, self.label)
+            self.timeline.rewind()
+            self.timeline.start()
         if key == '0':
             self.mode = 0
             self.timeline_completed(self.timeline)
-        self.label.set_opacity(0)
+        if key =='space':
+            pass
 
     def timeline_completed(self, data):
         self.timeline.rewind()
