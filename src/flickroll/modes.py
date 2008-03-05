@@ -41,6 +41,7 @@ class Slideshow():
 
     def timeOp_black_start(self, data, image): 
         image.hide()
+        image.rotate_x(0, 0, 0)
         self.timeOp_black.start()
 
     def timeOpUp_start(self, data, image):
@@ -135,6 +136,8 @@ class Scroll():
     
     def timeOp_black_start(self, data, image):
         image.hide()
+        image.rotate_x(0, 0, 0)
+        image.set_depth(0)
         self.timeOp_black.start()
 
     def timeOpA_start(self, data, image):
@@ -199,6 +202,7 @@ class SlideText():
 
     def timeOp_black_start(self, data, image):
         image.hide()
+        image.rotate_x(0, 0, 0)
         self.timeOp_black.start()
 
     def timeline_start(self, data, image):
