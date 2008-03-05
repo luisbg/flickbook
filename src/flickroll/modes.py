@@ -57,14 +57,17 @@ class Slideshow():
         self.timeOpDown.set_speed(fps)
 
     def disconnect(self, timeline):
-        timeline.disconnect(self.cinUp)
+        timeline.disconnect(self.cin)
+        self.timeOp_black.disconnect(self.cinUp)
         self.timeOpUp.disconnect(self.cinDown)
 
 class Rotate():
     def __init__(self, timeline, fps, image):
-        self.timeOpA = clutter.Timeline(185, fps)
+        self.timeOp_black = clutter.Timeline(5, fps)
+        self.timeOpA = clutter.Timeline(180, fps)
         self.timeOpB = clutter.Timeline(15, fps)
-        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.cin = timeline.connect("started", self.timeOp_black_start, image)
+        self.cin1 = self.timeOp_black.connect("completed", self.timeOpA_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
 
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
@@ -82,7 +85,12 @@ class Rotate():
         self.opacityUp.apply(image)
         self.opacityDown.apply(image)
 
-    def timeOpA_start(self, data):
+    def timeOp_black_start(self, data, image): 
+        image.hide()
+        self.timeOp_black.start()
+
+    def timeOpA_start(self, data, image):
+        image.show()
         self.timeOpA.start()
         self.timeOpB.rewind()
 
@@ -95,14 +103,17 @@ class Rotate():
         self.timeOpB.set_speed(fps)
 
     def disconnect(self, timeline):
-        timeline.disconnect(self.cin1)
+        timeline.disconnect(self.cin)
+        self.timeOp_black.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
 
 class Scroll():
     def __init__(self, timeline, fps, image, x_pos):
+        self.timeOp_black = clutter.Timeline(5, fps)
         self.timeOpA = clutter.Timeline(150, fps)
-        self.timeOpB = clutter.Timeline(50, fps)
-        self.cin1 = timeline.connect("started", self.timeOpA_start)
+        self.timeOpB = clutter.Timeline(45, fps)
+        self.cin = timeline.connect("started", self.timeOp_black_start, image)
+        self.cin1 = self.timeOp_black.connect("completed", self.timeOpA_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
 
         alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
@@ -121,8 +132,13 @@ class Scroll():
         self.path.apply(image)
         self.opacityUp.apply(image)
         self.opacityDown.apply(image)
+    
+    def timeOp_black_start(self, data, image):
+        image.hide()
+        self.timeOp_black.start()
 
-    def timeOpA_start(self, data):
+    def timeOpA_start(self, data, image):
+        image.show()
         self.timeOpA.start()
         self.timeOpB.rewind()
 
@@ -135,7 +151,8 @@ class Scroll():
         self.timeOpB.set_speed(fps)
 
     def disconnect(self, timeline):
-        timeline.disconnect(self.cin1)
+        timeline.disconnect(self.cin)
+        self.timeOp_black.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
 
 class SlideText():
@@ -154,9 +171,11 @@ class SlideText():
         self.label.set_color(clutter.Color(200, 200, 200))
         self.label.set_opacity(0)
 
+        self.timeOp_black = clutter.Timeline(5, fps)
         self.timeOpA = clutter.Timeline(150, fps)
-        self.timeOpB = clutter.Timeline(50, fps)
-        self.cin1 = timeline.connect("started", self.timeline_start)
+        self.timeOpB = clutter.Timeline(45, fps)
+        self.cin = timeline.connect("started", self.timeOp_black_start, image)
+        self.cin1 = self.timeOp_black.connect("completed", self.timeline_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
  
         alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
@@ -171,14 +190,19 @@ class SlideText():
         self.opacityDown.apply(image)
 
         self.timeline = clutter.Timeline(200, fps)
-        self.cin = timeline.connect("started", self.timeline_start)
+        self.cin_label = timeline.connect("started", self.timeline_start, image)
 
         alphaOpacity = clutter.Alpha(self.timeline, clutter.ramp_inc_func)
         self.opacity = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
 
         self.opacity.apply(self.label)
 
-    def timeline_start(self, data):
+    def timeOp_black_start(self, data, image):
+        image.hide()
+        self.timeOp_black.start()
+
+    def timeline_start(self, data, image):
+        image.show()
         self.label.set_text(self.lines[random.randint(0, len(self.lines) -1)])
         self.label.set_opacity(0)
         self.label.set_position(random.randint(0, 600), random.randint(0, 400))
@@ -200,5 +224,6 @@ class SlideText():
 
     def disconnect(self, timeline):
         timeline.disconnect(self.cin)
-        timeline.disconnect(self.cin1)
+        self.timeOp_black.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
+        timeline.disconnect(self.cin_label)
