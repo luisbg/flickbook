@@ -18,18 +18,27 @@
 from shutil import move
 import urllib
 import threading
+import socket
 
-class Download(threading.Thread):
+class Download():
     def __init__(self, source, filename):
-       self.source = source
-       self.filename = filename
-       threading.Thread.__init__(self)
+        self.source = source
+        self.filename = filename
+	self.connection = True
+        socket.setdefaulttimeout(15)
 
     def run(self):
-       tmp_file = urllib.urlretrieve(self.source)
-       move(tmp_file[0], self.filename)
+        try:
+            urllib.urlopen(self.source)
+        except:
+            #print 'network down'
+            self.connection = False
+        if self.connection == True:
+            tmp_file = urllib.urlretrieve(self.source)
+            move(tmp_file[0], self.filename)
+        self.connection = True
 
 if __name__ == "__main__":
     source = 'https://launchpadlibrarian.net/12174626/flickbook192.jpg'
     filename = 'test.jpg'
-    Download(source, filename).start()
+    Download(source, filename).run()

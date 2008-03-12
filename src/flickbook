@@ -71,7 +71,6 @@ class FlickBook:
         self.x_pos = 0
         self.y_pos = 0
         self.beat_count = 0
-        self.flickroll = flickroll.core.FlickRoll()
 
         self.timeline = clutter.Timeline(200,self.fps)
         self.timeline.connect("completed", self.timeline_completed)
@@ -91,6 +90,7 @@ class FlickBook:
         self.stage.add(self.label)
         self.stage.show_all()
         self.timeline.start()
+        self.flickroll = flickroll.core.FlickRoll()
 
     def next(self, widget):
         file = '%d.jpg' % self.c

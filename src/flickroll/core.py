@@ -20,6 +20,7 @@ import urllib
 import random
 import threading
 import download
+import time
 
 class FlickRoll(threading.Thread):
     def __init__(self):
@@ -67,11 +68,13 @@ class FlickRoll(threading.Thread):
 
                 self.tag_list = self.flickr_api.tags_getListPhoto(photo_id=self.id)
                 self.search_photo()
+            except IOError:
+                print 'network down'
             except:
                 self.get_first_photo()
                 self.get_next_photo(filename, size)
         try:
-            if threading.activeCount() < 3:
+            if threading.activeCount() < 42:
                 threading.Thread(target=get_next_photo_in_thread).start()
         except:
             pass
@@ -81,4 +84,5 @@ if __name__ == "__main__":
     flickroll.get_first_photo()
     for element in (range(42)):
         flickroll.get_next_photo('%d.jpg' % element, 'large')
+        time.sleep(1)
         print element
