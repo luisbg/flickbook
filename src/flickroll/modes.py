@@ -28,19 +28,19 @@ class Slideshow():
         self.cinUp = self.timeOp_black.connect("completed", self.timeOpUp_start, image)
         self.cinDown = self.timeOpUp.connect("completed", self.timeOpDown_start, image)
 
-        alphaDepth = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
+        alphaDepth = clutter.Alpha(timeline, clutter.EASE_IN_QUAD)
         self.depth = clutter.BehaviourDepth(0, 100)
         self.depth.set_alpha(alphaDepth)
-        alphaOpacity = clutter.Alpha(self.timeOpUp, clutter.EASE_IN_CUBIC)
+        alphaOpacity = clutter.Alpha(self.timeOpUp, clutter.EASE_IN_OUT_CUBIC)
         self.opacityUp = clutter.BehaviourOpacity(0, 255)
         self.opacityUp.set_alpha(alphaOpacity)
-        alphaOpacity = clutter.Alpha(self.timeOpDown, clutter.EASE_IN_CUBIC)
+        alphaOpacity = clutter.Alpha(self.timeOpDown, clutter.EASE_IN_OUT_CUBIC)
         self.opacityDown = clutter.BehaviourOpacity(255, 0)
         self.opacityDown.set_alpha(alphaOpacity)
 
         self.opacityUp.apply(image)
         self.opacityDown.apply(image)
-        #self.depth.apply(image)
+        self.depth.apply(image)
 
     def timeOp_black_start(self, data, image): 
         image.hide()
