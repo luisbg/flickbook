@@ -41,21 +41,20 @@ class FlickBook:
             dest="mode", help="Animation mode", default=1)
 	(options, args) = parser.parse_args()
 
-	self.fullscreen = options.fullscreen
+	self.fullscreen_state = options.fullscreen
 	self.mode = options.mode
+        self.win_width = 900
+        self.win_height = 900
 
         self.imgdir = "/home/luisbg/awesome/"
         self.files = []
         self.files = os.listdir (self.imgdir)
       
         self.stage = clutter.stage_get_default ()
-        if self.fullscreen:
-            print 'here'
-            self.stage.set_fullscreen (True)
-            self.photosize = 'large'
-        else:
-            self.stage.set_size (900,900)
-            self.photosize = 'medium'
+        self.stage.set_size (self.win_width, self.win_height)
+        self.stage.connect ("fullscreen", self.size_change)
+        self.stage.connect ("unfullscreen", self.size_change)
+        self.fullscreen()
 
         self.width = self.stage.get_size ()[0]
         self.height = self.stage.get_size ()[1]
@@ -141,6 +140,21 @@ class FlickBook:
         else:
             self.i = 0
 
+    def size_change (self, obj):
+        self.width = self.stage.get_size ()[0]
+        self.height = self.stage.get_size ()[1]
+
+    def fullscreen (self):
+        if self.fullscreen_state:
+            self.stage.set_fullscreen (False)
+            self.photosize = 'large'
+            self.fullscreen_state = False
+
+        else:
+            self.stage.set_fullscreen (True)
+            self.photosize = 'medium'
+            self.fullscreen_state = True
+
     def key_press (self, widget, event):
         key = gtk.gdk.keyval_name (event.keyval)
         if key =='space':
@@ -197,12 +211,7 @@ class FlickBook:
             self.timeline_completed (self.timeline)
 
         elif key == 'f':
-            if self.fullscreen:
-                self.stage.set_fullscreen (False)
-                self.fullscreen = False
-            else:
-                self.stage.set_fullscreen (True)
-                self.fullscreen = True
+            self.fullscreen()
 
     def timeline_completed (self, data):
         self.timeline.rewind ()
