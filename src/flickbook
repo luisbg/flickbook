@@ -22,6 +22,7 @@ import gtk
 import gobject
 import random
 import time
+import Image
 import flickroll.core
 import flickroll.modes
 
@@ -56,15 +57,15 @@ class FlickBook:
         self.stage.connect ("unfullscreen", self.size_change)
         self.fullscreen()
 
-        self.width = self.stage.get_size ()[0]
-        self.height = self.stage.get_size ()[1]
+        self.stage_width = self.stage.get_size ()[0]
+        self.stage_height = self.stage.get_size ()[1]
         self.stage.set_color (clutter.color_parse ("#000000"))
         self.stage.set_title ('Flickbook')
         
         self.stage.connect ('key-press-event', self.key_press)
 
         self.image = clutter.texture_new_from_file ('../files/flickbook.jpg')
-        self.image.set_size (600, 600)
+        self.image.set_size (self.win_width, self.win_height)
         self.image.set_position (0,0)
         self.image.set_opacity (100)
 
@@ -112,22 +113,24 @@ class FlickBook:
 	
     def image_change (self, file):
         self.image.set_from_file (file)
-        self.image.set_width (self.width)
-        self.image.set_height (self.height)
-        self.image.set_opacity (100)
-        width = self.image.get_size ()[0]
-        height = self.image.get_size ()[1]
-        ratioW = width / float (self.width)
-        ratioH = height / float (self.height)
-        if ratioW > ratioH:
-            ratio = ratioW
-        else:
-            ratio = ratioH
-        width = width * ratio
-        self.x_pos = int ((self.width / 2) - (width / 2))
-        height = height * ratio
-        self.y_pos = int ((self.height / 2) - (height / 2))
-        self.image.set_position (self.x_pos, self.y_pos)
+        img = Image.open (file)
+        width, height = img.size
+        stage_ar = float (self.stage_width) / self.stage_height
+        media_ar = float (width) / height
+
+        if (media_ar > stage_ar):  # portrait format picture, so we need to
+            new_height = self.stage_width / media_ar    # adjust the height
+            self.image.set_height (new_height)
+            self.image.set_width (self.stage_width)
+            pos = (self.stage_height - new_height) / 2  # and center
+            self.image.set_position (0, pos)            # horizontally
+
+        else:  # landscape format picture, so we need to
+            new_width = self.stage_height * media_ar   # adjust the width
+            self.image.set_width (new_width)
+            self.image.set_height (self.stage_height)
+            pos = (self.stage_width - new_width) / 2   # and center
+            self.image.set_position (pos, 0)           # vertically
 
     def new_thread (self, widget):
         self.flickroll.get_first_photo ()
@@ -141,8 +144,8 @@ class FlickBook:
             self.i = 0
 
     def size_change (self, obj):
-        self.width = self.stage.get_size ()[0]
-        self.height = self.stage.get_size ()[1]
+        self.stage_width = self.stage.get_size ()[0]
+        self.stage_height = self.stage.get_size ()[1]
 
     def fullscreen (self):
         if self.fullscreen_state:
