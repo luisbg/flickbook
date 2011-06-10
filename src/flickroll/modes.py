@@ -20,28 +20,31 @@ import clutter
 import random
 
 class Slideshow():
-    def __init__(self, timeline, fps, image):
-        self.timeOp_black = clutter.Timeline(5, fps)
-        self.timeOpUp = clutter.Timeline(150, fps)
-        self.timeOpDown = clutter.Timeline(45, fps)
+    def __init__(self, timeline, image):
+        self.timeOp_black = clutter.Timeline(100)
+        self.timeOpUp = clutter.Timeline(3000)
+        self.timeOpDown = clutter.Timeline(900)
         self.cin = timeline.connect("started", self.timeOp_black_start, image)
         self.cinUp = self.timeOp_black.connect("completed", self.timeOpUp_start, image)
         self.cinDown = self.timeOpUp.connect("completed", self.timeOpDown_start, image)
 
-        alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
-        self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
-        alphaOpacity = clutter.Alpha(self.timeOpUp, clutter.sine_inc_func)
-        self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
-        alphaOpacity = clutter.Alpha(self.timeOpDown, clutter.sine_inc_func)
-        self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
+        alphaDepth = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
+        self.depth = clutter.BehaviourDepth(0, 100)
+        self.depth.set_alpha(alphaDepth)
+        alphaOpacity = clutter.Alpha(self.timeOpUp, clutter.EASE_IN_CUBIC)
+        self.opacityUp = clutter.BehaviourOpacity(0, 255)
+        self.opacityUp.set_alpha(alphaOpacity)
+        alphaOpacity = clutter.Alpha(self.timeOpDown, clutter.EASE_IN_CUBIC)
+        self.opacityDown = clutter.BehaviourOpacity(255, 0)
+        self.opacityDown.set_alpha(alphaOpacity)
 
         self.opacityUp.apply(image)
         self.opacityDown.apply(image)
-        self.depth.apply(image)
+        #self.depth.apply(image)
 
     def timeOp_black_start(self, data, image): 
         image.hide()
-        image.rotate_x(0, 0, 0)
+        # image.rotate_x(0, 0, 0)
         self.timeOp_black.start()
 
     def timeOpUp_start(self, data, image):
@@ -53,32 +56,35 @@ class Slideshow():
         self.timeOpUp.rewind()
         self.timeOpDown.start()
 
-    def set_speed(self, fps):
-        self.timeOpUp.set_speed(fps)
-        self.timeOpDown.set_speed(fps)
-
     def disconnect(self, timeline):
         timeline.disconnect(self.cin)
         self.timeOp_black.disconnect(self.cinUp)
         self.timeOpUp.disconnect(self.cinDown)
 
 class Rotate():
-    def __init__(self, timeline, fps, image):
-        self.timeOp_black = clutter.Timeline(5, fps)
-        self.timeOpA = clutter.Timeline(180, fps)
-        self.timeOpB = clutter.Timeline(15, fps)
+    def __init__(self, timeline, image):
+        self.timeOp_black = clutter.Timeline(5)
+        self.timeOpA = clutter.Timeline(180)
+        self.timeOpB = clutter.Timeline(15)
         self.cin = timeline.connect("started", self.timeOp_black_start, image)
         self.cin1 = self.timeOp_black.connect("completed", self.timeOpA_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
 
-        alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
-        self.depth = clutter.BehaviourDepth(alphaDepth, -1000, 10)
-        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        alphaDepth = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
+        self.depth = clutter.BehaviourDepth(-1000, 10)
+        self.depth.set_alpha(alphaDepth)
+
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.EASE_IN_CUBIC)
         self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
-        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.alphaOpacityUp.set_alpha(alphaOpacity)
+
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.EASE_IN_CUBIC)
         self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
-        alphaRotate = clutter.Alpha(timeline, clutter.smoothstep_inc_func)
+        self.alphaOpacityDown.set_alpha(alphaOpacity)
+
+        alphaRotate = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
         self.rotate = clutter.BehaviourRotate(alphaRotate, 0, 0)
+        self.rotate.set_alpha(alphaRotate)
         self.rotate.set_property("angle-end", 30)
  
         self.depth.apply(image)
@@ -99,36 +105,36 @@ class Rotate():
         self.timeOpA.rewind()
         self.timeOpB.start()
 
-    def set_speed(self, fps):
-        self.timeOpA.set_speed(fps)
-        self.timeOpB.set_speed(fps)
-
     def disconnect(self, timeline):
         timeline.disconnect(self.cin)
         self.timeOp_black.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
 
 class Scroll():
-    def __init__(self, timeline, fps, image, x_pos):
-        self.timeOp_black = clutter.Timeline(5, fps)
-        self.timeOpA = clutter.Timeline(150, fps)
-        self.timeOpB = clutter.Timeline(45, fps)
+    def __init__(self, timeline, image, x_pos):
+        self.timeOp_black = clutter.Timeline(5)
+        self.timeOpA = clutter.Timeline(150)
+        self.timeOpB = clutter.Timeline(45)
         self.cin = timeline.connect("started", self.timeOp_black_start, image)
         self.cin1 = self.timeOp_black.connect("completed", self.timeOpA_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
 
-        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.EASE_IN_CUBIC)
         self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
-        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        self.opacityUp.set_alpha(alphaOpacity)
+
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.EASE_IN_CUBIC)
         self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
+        self.opacityDown.set_alpha(alphaOpacity)
 
         knots = ( \
                 ( x_pos, -100 ),   \
                 ( x_pos,  200 ),   \
         )
 
-        alpha = clutter.Alpha(timeline, clutter.ramp_inc_func)
+        alpha = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
         self.path = clutter.BehaviourPath(alpha=alpha, knots=knots)
+        self.path.set_alpha(alpha)
         
         self.path.apply(image)
         self.opacityUp.apply(image)
@@ -149,17 +155,13 @@ class Scroll():
         self.timeOpA.rewind()
         self.timeOpB.start()
 
-    def set_speed(self, fps):
-        self.timeOpA.set_speed(fps)
-        self.timeOpB.set_speed(fps)
-
     def disconnect(self, timeline):
         timeline.disconnect(self.cin)
         self.timeOp_black.disconnect(self.cin1)
         self.timeOpA.disconnect(self.cin2)
 
 class SlideText():
-    def __init__(self, timeline, fps, image, label):
+    def __init__(self, timeline, image, label):
         f = open('../files/english', 'r')
         self.lines = f.readlines()
 
@@ -174,18 +176,18 @@ class SlideText():
         self.label.set_color(clutter.Color(200, 200, 200))
         self.label.set_opacity(0)
 
-        self.timeOp_black = clutter.Timeline(5, fps)
-        self.timeOpA = clutter.Timeline(150, fps)
-        self.timeOpB = clutter.Timeline(45, fps)
+        self.timeOp_black = clutter.Timeline(5)
+        self.timeOpA = clutter.Timeline(150)
+        self.timeOpB = clutter.Timeline(45)
         self.cin = timeline.connect("started", self.timeOp_black_start, image)
         self.cin1 = self.timeOp_black.connect("completed", self.timeline_start, image)
         self.cin2 = self.timeOpA.connect("completed", self.timeOpB_start)
  
-        alphaDepth = clutter.Alpha(timeline, clutter.ramp_inc_func)
+        alphaDepth = clutter.Alpha(timeline, clutter.EASE_IN_CUBIC)
         self.depth = clutter.BehaviourDepth(alphaDepth, 0, 100)
-        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.sine_inc_func)
+        alphaOpacity = clutter.Alpha(self.timeOpA, clutter.EASE_IN_CUBIC)
         self.opacityUp = clutter.BehaviourOpacity(alphaOpacity, 0, 255)
-        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.sine_inc_func)
+        alphaOpacity = clutter.Alpha(self.timeOpB, clutter.EASE_IN_CUBIC)
         self.opacityDown = clutter.BehaviourOpacity(alphaOpacity, 255, 0)
  
         self.depth.apply(image)
@@ -220,11 +222,6 @@ class SlideText():
     def timeOpB_start(self, data):
         self.timeOpA.rewind()
         self.timeOpB.start()
-
-    def set_speed(self, fps):
-        self.timeline.set_speed(fps)
-        self.timeOpA.set_speed(fps)
-        self.timeOpB.set_speed(fps)
 
     def disconnect(self, timeline):
         timeline.disconnect(self.cin)
