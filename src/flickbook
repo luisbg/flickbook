@@ -42,14 +42,22 @@ class FlickBook:
             dest="mode", help="Animation mode", default=1)
 	(options, args) = parser.parse_args()
 
+        if len(args) > 0:
+            self.imgdir = args[0]
+            self.files = []
+            self.files = os.listdir (self.imgdir)
+            print "Picture list from " + str(args[0])
+        else:
+            self.imgdir = ""
+            self.files = []
+            print "No folder input."
+
+        print "Starting flickbook."
+
 	self.fullscreen_state = options.fullscreen
 	self.mode = options.mode
         self.win_width = 900
         self.win_height = 900
-
-        self.imgdir = "/home/luisbg/awesome/"
-        self.files = []
-        self.files = os.listdir (self.imgdir)
       
         self.stage = clutter.stage_get_default ()
         self.stage.set_size (self.win_width, self.win_height)
