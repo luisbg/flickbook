@@ -113,6 +113,9 @@ class FlickBook:
         clutter.main_quit ()
 
     def next (self, widget):
+        if len(self.files) == 0:
+            return None
+
         n = random.randint (0, len (self.files) - 1)
         file = self.imgdir + self.files[n]
         if file != self.filesrc:
