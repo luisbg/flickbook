@@ -71,6 +71,7 @@ class FlickBook:
         self.stage.set_title ('Flickbook')
         
         self.stage.connect ('key-press-event', self.key_press)
+        self.stage.connect ('delete-event', self.close)
 
         self.image = clutter.texture_new_from_file ('../files/flickbook.jpg')
         self.image.set_size (self.win_width, self.win_height)
@@ -106,6 +107,9 @@ class FlickBook:
         self.stage.show_all ()
         self.timeline.start ()
         # self.flickroll = flickroll.core.FlickRoll ()
+
+    def close (self, widget, event):
+        clutter.main_quit ()
 
     def next (self, widget):
         n = random.randint (0, len (self.files) - 1)
@@ -188,7 +192,7 @@ class FlickBook:
             # self.timeline.set_speed (self.fps)
             # self.behave.set_speed (self.fps)
         elif key == 'q' or key == 'Escape':
-            clutter.main_quit ()
+            self.close(None, None)
         elif key == '1':
             self.behave.disconnect (self.timeline)
             self.behave = flickroll.modes.Slideshow (self.timeline, self.fps, \
