@@ -126,6 +126,9 @@ class FlickBook:
                 print "file doesn't exist"
 
             self.filesrc = file
+        else:
+            if len(self.files) > 1:
+                self.next (None)
 	
     def image_change (self, file):
         self.image.set_from_file (file)
