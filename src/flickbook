@@ -172,11 +172,13 @@ class FlickBook:
     def fullscreen (self):
         if self.fullscreen_state:
             self.stage.set_fullscreen (False)
+            self.stage.show_cursor()
             self.photosize = 'large'
             self.fullscreen_state = False
 
         else:
             self.stage.set_fullscreen (True)
+            self.stage.hide_cursor()
             self.photosize = 'medium'
             self.fullscreen_state = True
 
