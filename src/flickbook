@@ -87,6 +87,7 @@ class FlickBook:
         self.x_pos = 0
         self.y_pos = 0
         self.beat_count = 0
+        self.filesrc = ""
 
         self.timeline = clutter.Timeline (4000)
         self.timeline.connect ("completed", self.timeline_completed)
@@ -114,14 +115,17 @@ class FlickBook:
     def next (self, widget):
         n = random.randint (0, len (self.files) - 1)
         file = self.imgdir + self.files[n]
-        if os.path.exists (file):
-            self.image_change (file)
-            if self.c < self.loop_amount:
-                self.c += 1
+        if file != self.filesrc:
+            if os.path.exists (file):
+                self.image_change (file)
+                if self.c < self.loop_amount:
+                    self.c += 1
+                else:
+                    self.c = 0
             else:
-                self.c = 0
-        else:
-            print "file doesn't exist"
+                print "file doesn't exist"
+
+            self.filesrc = file
 	
     def image_change (self, file):
         self.image.set_from_file (file)
